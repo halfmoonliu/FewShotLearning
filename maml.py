@@ -81,7 +81,7 @@ def maml(p_model, meta_optimizer, inner_training_steps, nb_epochs, batch_size_K,
 
 
 if __name__ == "__main__":
-    device = 'cuda'
+    device = 'cpu'
     params = [torch.rand(40, 1, device=device).uniform_(-np.sqrt(6. / 41), np.sqrt(6. / 41)).requires_grad_(),
               torch.zeros(40, device=device).requires_grad_(),
               torch.rand(40, 40, device=device).uniform_(-np.sqrt(6. / 80), np.sqrt(6. / 80)).requires_grad_(),
@@ -89,9 +89,9 @@ if __name__ == "__main__":
               torch.rand(1, 40, device=device).uniform_(-np.sqrt(6. / 41), np.sqrt(6. / 41)).requires_grad_(),
               torch.zeros(1, device=device).requires_grad_()]
 
-    device = 'cuda'
+    device = 'cpu'
     meta_optimizer = torch.optim.Adam(params, lr=1e-3)
-    training_loss = maml(params, meta_optimizer, 1, 70_000, 10, 1e-3, device=device, nb_tasks=10)
+    training_loss = maml(params, meta_optimizer, 1, 2, 10, 1e-3, device=device, nb_tasks=10)
 
     plt.title('MAML, K=10')
     x = torch.linspace(-5, 5, 50).to(device)
