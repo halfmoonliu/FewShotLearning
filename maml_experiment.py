@@ -41,8 +41,6 @@ def sample_task():
     w = torch.normal(mu, torch.eye(10))
     return Task(w)
 
-
-
 def perform_k_training_steps(params, 
                              task, 
                              N, 
@@ -130,7 +128,7 @@ if __name__ == "__main__":
     meta_optimizer = torch.optim.Adam(params, lr=1e-3)
     N_list = [5, 10, 15, 20]
     M_list = [5, 10, 50, 100]
-    VarE_list = [0, 0.1, 0.2, 0.3]
+    VarE_list = [0, 0.1, 0.3, 0.5]
     
     results = list()
     for m in M_list:
@@ -138,24 +136,24 @@ if __name__ == "__main__":
             for varE in VarE_list:
                 training_loss = maml(p_model = params, 
                                  meta_optimizer = meta_optimizer, 
-                                 inner_steps = 100, 
-                                 n_epochs = 100, 
+                                 inner_steps = 10, 
+                                 n_epochs = 1000, 
                                  N = n, 
                                  VarE = varE,
                                  alpha = 1e-3, 
                                  M = m,
-                                 device=device,)
+                                 device=device)
 
 
                 task_new = sample_task()
-                x_new, y_new, loss_func = task_new.sample(n)
+                x_new, y_new, loss_func = task_new.sample(n+1, varE)
                 y_hat_raw = mlp(x_new.to(device), params)
 
-                test_loss_raw = loss_func(y_hat_raw, 
-                                y_new.to(device))
+                test_loss_raw = loss_func(y_hat_raw[-1], 
+                                y_new[-1].to(device))
                 results.append([m, n, varE,test_loss_raw.item()])
     results_df = pd.DataFrame(results, columns=['M', 'N','VarE', 'Loss'])        
-    results_df.to_csv('results_error_20240329.csv', index=False)
+    results_df.to_csv('results_error_20240330.csv', index=False)
             
             
 
