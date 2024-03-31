@@ -17,13 +17,13 @@ class Task:
         '''
         # torch.randn generates tensor with normal distribution (mean=0, std=1)
         x = np.random.normal(loc=0, scale=1, size=(N,10))
-        e = np.random.normal(loc=0, scale=VarE**0.5, size=N)
+        e = np.random.normal(loc=0, scale=np.ones(N)*VarE**0.5)
         y = np.matmul(x, self.w) +e
         
         return x, y
 
 def sample_task():    
-    w = np.random.normal(loc=0, scale = 1, size=(10))
+    w = np.random.normal(loc=np.ones(10), scale = 1)
     return Task(w)
 
 N_list = [5, 10, 15, 20]
@@ -46,6 +46,6 @@ for n in N_list:
         results.append([n, varE, MSE])
 
 results_df = pd.DataFrame(results, columns=['N','VarE', 'Loss'])        
-results_df.to_csv('Test_error_OLS_20240330.csv', index=False)
+results_df.to_csv('Test_error_OLS_20240331.csv', index=False)
 
 

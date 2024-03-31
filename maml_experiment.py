@@ -30,15 +30,15 @@ class Task:
         '''
         # torch.randn generates tensor with normal distribution (mean=0, std=1)
         x = torch.randn(N, 10)
-        e = torch.normal(mean=0, std=torch.ones(10)*(VarE**0.5))
-        y = torch.matmul(x, self.w) + e
+        e = torch.normal(mean=0, std=torch.ones(N)*(VarE**0.5))
+        y = torch.matmul(x, self.w) +e
         loss_fct = nn.MSELoss()
         return x, y, loss_fct
 
 @torch.no_grad()
 def sample_task():
     mu = torch.ones(10)
-    w = torch.normal(mu, torch.eye(10))
+    w = torch.normal(mu, 1)
     return Task(w)
 
 def perform_k_training_steps(params, 
@@ -90,7 +90,7 @@ def maml(p_model,
                                                           VarE,
                                                           inner_steps, alpha, device=device))
             # Sample data points Di' for the meta-update (line 8 in the pseudocode)
-            x, y, loss_fct = task.sample(25,VarE)
+            x, y, loss_fct = task.sample(N,VarE)
             D_i_prime.append((x, y, loss_fct))
 
         # Meta update
@@ -153,7 +153,7 @@ if __name__ == "__main__":
                                 y_new[-1].to(device))
                 results.append([m, n, varE,test_loss_raw.item()])
     results_df = pd.DataFrame(results, columns=['M', 'N','VarE', 'Loss'])        
-    results_df.to_csv('results_error_20240330.csv', index=False)
+    results_df.to_csv('results_error_20240331.csv', index=False)
             
             
 
